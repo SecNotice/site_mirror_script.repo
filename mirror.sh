@@ -29,19 +29,34 @@ function commit_files()
 # печатает логи
 function get_log()
 {
-	echo "\n============ `$CUR_DATE` ============"
-	echo "\nИзменённые:"
+#	echo "\n============ `$CUR_DATE` ============"
+	echo "\nModified:"
 	echo "\n$MOD"
-	echo "\nНовые:"
+	echo "\nNew:"
 	echo "\n$NEW"
 }
 
 # скачивает сайт, заливает в репозиторий, пишет логи
 function main()
 {
-	pushd $2
+	LOG_FILE="`pwd`/log"
+	URL=$1
+	LOC=$2
+	
+	pushd $LOC
 
+	echo -e "\n============ `$CUR_DATE` ============" >> $LOG_FILE
+	echo -e "\n. Start fetching '$URL'" >> $LOG_FILE
+	
 	$FETCH $1					# скачиваем сайт
+
+	if [ $? != "0" ]
+	then
+		echo -e "\n- Error while fetching" >> $LOG_FILE
+	else
+		echo -e "\n+ Fetching successed" >> $LOG_FILE
+	fi
+
 	MOD=$(get_modified_files)
 	NEW=$(get_untracked_files)
 
@@ -51,8 +66,11 @@ function main()
 
 	popd
 
-	echo -e $LOG >> log # записываем лог
+	echo -e $LOG >> $LOG_FILE
 }
+
+OLD_LANG=$LANG
+export LANG="en.EN_UTF-8"
 
 # основной цикл
 cat $1 | while IFS= read -r line
@@ -60,3 +78,5 @@ do
 	A=( $line )
 	main ${A[0]} ${A[1]}
 done
+
+export LANG="$OLD_LANG"
