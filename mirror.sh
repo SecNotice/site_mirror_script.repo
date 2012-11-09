@@ -75,20 +75,20 @@ function main()
 
 	$FETCH $1					# скачиваем сайт
 
-	if [ $? != "0" ]
-	then
-		echo -e "\n- Error while fetching" >> $LOG_FILE
-		exit 1
-	else
-		echo -e "\n+ Fetching successed" >> $LOG_FILE
-	fi
+#	if [ $? != "0" ]
+#	then
+#		echo -e "\n- Error while fetching" >> $LOG_FILE
+#		exit 1
+#	else
+#		echo -e "\n+ Fetching successed" >> $LOG_FILE
+#	fi
 
 	MOD=$(get_modified_files)
 	NEW=$(get_untracked_files)
 
 	LOG=$(get_log)
 
-	$commit_files
+	$(commit_files)
 
 	popd
 
